@@ -28,7 +28,47 @@
   [![Menu](https://img.shields.io/badge/Menu-Interactive-yellow.svg?style=for-the-badge)]()
 </div>
 
-## 📋 Table of Contents
+## 🔧 Prerequisites
+- Android device (7.0+)
+- [Termux App](https://f-droid.org/en/packages/com.termux/) installed
+- At least 10GB free storage
+- Active internet connection
+
+## ⚡ Quick Installation
+```bash
+# One-line installation command
+curl -sSL https://raw.githubusercontent.com/itz-binar/linuxtools/main/scripts/itzbinar.sh -o itzbinar.sh && chmod +x itzbinar.sh && ./itzbinar.sh
+
+# Or manual installation
+git clone https://github.com/itz-binar/linuxtools.git
+cd linuxtools/scripts
+chmod +x itzbinar.sh
+./itzbinar.sh
+```
+
+## 🚀 Running the Environment
+```bash
+# Start environments
+kali                    # Start Kali Linux environment
+kali-root              # Start Kali Linux with root access
+nh                     # Start NetHunter environment
+nh-root                # Start NetHunter with root access
+arch                   # Start Arch Linux environment
+arch-root              # Start Arch Linux with root access
+
+# Start GUI interfaces
+nh-kex                 # Start NetHunter GUI
+nh-kex-stop           # Stop NetHunter GUI
+start-vnc              # Start VNC server
+stop-vnc               # Stop VNC server
+
+# Quick utilities
+update                 # Update all packages
+fix-proot             # Fix hanging proot sessions
+fix-permission        # Fix storage permissions
+```
+
+## �� Table of Contents
 - [Features](#-features)
 - [Prerequisites](#-prerequisites)
 - [Installation](#-installation)
