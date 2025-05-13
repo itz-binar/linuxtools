@@ -958,4 +958,83 @@ show_developer_info() {
 show_developer_info
 
 print_message "🚀 Happy Hacking! Enjoy your professional pentesting environment! 🚀\n" "$CYAN"
-print_message "     Powered by ITZBINAR's Advanced Toolkit\n" "$PURPLE" 
+print_message "     Powered by ITZBINAR's Advanced Toolkit\n" "$PURPLE"
+
+# Function to install environment
+install_environment() {
+    log "INFO" "Starting environment installation..."
+    
+    # Install base packages
+    log "INFO" "Installing base packages..."
+    pkg update -y && pkg upgrade -y
+    pkg install -y wget curl git python proot proot-distro openssh
+
+    # Install environments
+    log "INFO" "Installing Linux environments..."
+    proot-distro install kali
+    proot-distro install nethunter
+    proot-distro install archlinux
+
+    # Create environment aliases
+    log "INFO" "Setting up environment aliases..."
+    cat >> "${HOME}/.bashrc" << 'EOF'
+    
+# Environment shortcuts
+alias kali='proot-distro login kali'
+alias kali-root='proot-distro login kali --user root'
+alias nh='proot-distro login nethunter'
+alias nh-root='proot-distro login nethunter --user root'
+alias arch='proot-distro login archlinux'
+alias arch-root='proot-distro login archlinux --user root'
+
+# GUI shortcuts
+alias nh-kex='nethunter kex passwd && nethunter kex &'
+alias nh-kex-stop='nethunter kex stop'
+alias start-vnc='vncserver -localhost no'
+alias stop-vnc='vncserver -kill :1'
+
+# Utility shortcuts
+alias update='pkg update -y && pkg upgrade -y'
+alias fix-proot='pkill -9 proot'
+alias fix-permission='termux-setup-storage'
+EOF
+
+    # Setup storage access
+    log "INFO" "Setting up storage access..."
+    termux-setup-storage
+
+    # Install additional tools
+    log "INFO" "Installing additional tools..."
+    pkg install -y vim nano tmux htop neofetch nmap
+
+    log "SUCCESS" "Environment installation completed"
+    
+    # Run system optimization
+    optimize_system
+    
+    log "INFO" "Installation complete! Please restart Termux and run 'source ~/.bashrc'"
+}
+
+# Main execution
+main() {
+    initialize_script
+    check_requirements
+    
+    case "$1" in
+        "install")
+            install_environment
+            ;;
+        "optimize")
+            optimize_system
+            ;;
+        "backup")
+            backup_system
+            ;;
+        *)
+            install_environment
+            ;;
+    esac
+}
+
+# Execute main function
+main "$@" 
