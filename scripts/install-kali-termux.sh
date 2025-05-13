@@ -10,22 +10,6 @@
 # License: MIT
 # =========================================================
 
-# Ensure running in Termux
-if [ ! -d "/data/data/com.termux" ]; then
-    echo "Error: This script must be run in Termux!"
-    exit 1
-fi
-
-# Ensure proper PATH
-export PATH="/data/data/com.termux/files/usr/bin:/data/data/com.termux/files/usr/bin/applets:$PATH"
-export PREFIX="/data/data/com.termux/files/usr"
-export HOME="/data/data/com.termux/files/home"
-export LD_LIBRARY_PATH="/data/data/com.termux/files/usr/lib"
-
-# Strict mode
-set -euo pipefail
-IFS=$'\n\t'
-
 # Colors for better readability
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -36,13 +20,44 @@ CYAN='\033[0;36m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
 
-# Global variables
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOG_FILE="${HOME}/.termux/install_log.txt"
-BACKUP_DIR="${HOME}/.termux/backups"
-CONFIG_DIR="${HOME}/.termux/config"
-ERROR_COUNT=0
-MAX_RETRIES=3
+# Error handling
+set -e
+trap 'handle_error $? $LINENO $BASH_LINENO "$BASH_COMMAND" $(printf "::%s" ${FUNCNAME[@]:-})' ERR
+
+# Function to handle errors
+handle_error() {
+    local exit_code=$1
+    local line_no=$2
+    local bash_lineno=$3
+    local last_command=$4
+    local func_trace=$5
+
+    print_message "\n❌ Error occurred in script:" "$RED"
+    print_message "Exit code: $exit_code" "$RED"
+    print_message "Line number: $line_no" "$RED"
+    print_message "Command: $last_command" "$RED"
+    print_message "Function trace: $func_trace" "$RED"
+    
+    print_message "\n🔄 Attempting to fix..." "$YELLOW"
+    fix_common_errors
+}
+
+# Function to fix common errors
+fix_common_errors() {
+    print_message "1. Killing hanging processes..." "$YELLOW"
+    pkill -9 proot 2>/dev/null || true
+    
+    print_message "2. Fixing permissions..." "$YELLOW"
+    termux-setup-storage 2>/dev/null || true
+    
+    print_message "3. Updating package lists..." "$YELLOW"
+    pkg update -y 2>/dev/null || true
+    
+    print_message "4. Cleaning package cache..." "$YELLOW"
+    pkg clean 2>/dev/null || true
+    
+    print_message "\n✔ Recovery attempted. Please try again." "$GREEN"
+}
 
 # Function to print colored messages
 print_message() {
@@ -309,34 +324,20 @@ validate_installation() {
     return 0
 }
 
-# Function to perform system health check
-check_system_health() {
-    log "INFO" "Performing system health check..."
-    
-    # Check disk space
-    local disk_usage=$(df -h "${HOME}" | awk 'NR==2 {print $5}' | sed 's/%//')
-    if [ "$disk_usage" -gt 90 ]; then
-        log "WARNING" "Disk usage is high: ${disk_usage}%"
-    fi
-    
-    # Check running processes
-    local proot_count=$(pgrep -c proot || echo "0")
-    if [ "$proot_count" -gt 5 ]; then
-        log "WARNING" "High number of proot processes: $proot_count"
-    fi
-    
-    # Check package manager
-    if ! pkg list-installed >/dev/null 2>&1; then
-        log "ERROR" "Package manager is not functioning properly"
-        return 1
-    fi
-    
-    # Check network connectivity
-    if ! ping -c 1 8.8.8.8 >/dev/null 2>&1; then
-        log "WARNING" "Network connectivity issues detected"
-    fi
-    
-    log "SUCCESS" "System health check completed"
+# Function to show about
+show_about() {
+    clear
+    print_message "\n📱 About:" "$WHITE"
+    print_message "Developer: ITZBINAR" "$CYAN"
+    print_message "Version: 2.3" "$CYAN"
+    print_message "GitHub: https://github.com/itzbinar" "$CYAN"
+    print_message "\nFeatures:" "$WHITE"
+    print_message "- Full Kali Linux Environment" "$CYAN"
+    print_message "- NetHunter with GUI Support" "$CYAN"
+    print_message "- Arch Linux Development Environment" "$CYAN"
+    print_message "- Professional Tool Suite" "$CYAN"
+    print_message "- Root & Non-Root Support" "$CYAN"
+    press_enter_to_continue
 }
 
 # Function to clean up system
@@ -558,512 +559,4 @@ show_developer_info() {
 show_developer_info
 
 print_message "🚀 Happy Hacking! Enjoy your professional pentesting environment! 🚀\n" "$CYAN"
-print_message "     Powered by ITZBINAR's Advanced Toolkit\n" "$PURPLE"
-
-# Function to install Kali Linux
-install_kali_linux() {
-    log "INFO" "Installing Kali Linux..."
-    
-    # Install proot-distro if not present
-    install_package proot-distro
-    
-    # Install Kali
-    proot-distro install kali || {
-        log "ERROR" "Failed to install Kali Linux"
-        return 1
-    }
-    
-    # Create Kali setup script
-    cat > "${HOME}/.kali-setup.sh" << 'EOL'
-#!/bin/bash
-# Update system
-apt update && apt upgrade -y
-
-# Install essential tools
-DEBIAN_FRONTEND=noninteractive apt install -y kali-linux-default
-apt install -y python3-pip git vim nano tmux
-apt install -y nmap dirb nikto
-apt install -y metasploit-framework
-
-# Setup Python environment
-pip3 install --upgrade pip
-pip3 install requests beautifulsoup4 scapy
-EOL
-    chmod +x "${HOME}/.kali-setup.sh"
-    
-    # Run setup script
-    proot-distro login kali -- bash /root/.kali-setup.sh
-    
-    log "SUCCESS" "Kali Linux installed successfully"
-}
-
-# Function to install NetHunter
-install_nethunter() {
-    log "INFO" "Installing Kali NetHunter..."
-    
-    # Install dependencies
-    for pkg in wget curl proot tar; do
-        install_package "$pkg"
-    done
-    
-    # Download and install NetHunter
-    cd "${HOME}"
-    wget -O install-nethunter-termux https://offs.ec/2MceZWr || {
-        log "ERROR" "Failed to download NetHunter installer"
-        return 1
-    }
-    chmod +x install-nethunter-termux
-    ./install-nethunter-termux || {
-        log "ERROR" "Failed to install NetHunter"
-        return 1
-    }
-    
-    log "SUCCESS" "NetHunter installed successfully"
-}
-
-# Function to install Arch Linux
-install_arch_linux() {
-    log "INFO" "Installing Arch Linux..."
-    
-    # Install proot-distro if not present
-    install_package proot-distro
-    
-    # Install Arch
-    proot-distro install archlinux || {
-        log "ERROR" "Failed to install Arch Linux"
-        return 1
-    }
-    
-    # Create Arch setup script
-    cat > "${HOME}/.arch-setup.sh" << 'EOL'
-#!/bin/bash
-# Update system
-pacman -Syu --noconfirm
-
-# Install base development tools
-pacman -S --noconfirm base-devel git vim python python-pip
-pacman -S --noconfirm nodejs npm go rust
-EOL
-    chmod +x "${HOME}/.arch-setup.sh"
-    
-    # Run setup script
-    proot-distro login archlinux -- bash /root/.arch-setup.sh
-    
-    log "SUCCESS" "Arch Linux installed successfully"
-}
-
-# Function to setup GUI environment
-setup_gui_environment() {
-    log "INFO" "Setting up GUI environment..."
-    
-    # Install X11 packages
-    pkg install -y x11-repo
-    pkg install -y tigervnc
-    
-    # Create VNC setup script
-    cat > "${HOME}/bin/setup-vnc" << 'EOL'
-#!/data/data/com.termux/files/usr/bin/bash
-
-# Kill existing VNC server
-vncserver -kill :1 2>/dev/null || true
-
-# Start VNC server
-vncserver -localhost no :1
-echo "VNC Server started on port 5901"
-echo "Use a VNC viewer to connect"
-EOL
-    chmod +x "${HOME}/bin/setup-vnc"
-    
-    log "SUCCESS" "GUI environment setup complete"
-}
-
-# Function to configure aliases
-configure_aliases() {
-    log "INFO" "Configuring aliases..."
-    
-    # Add aliases to .bashrc
-    cat >> "${HOME}/.bashrc" << 'EOL'
-
-# Environment aliases
-alias kali='proot-distro login kali'
-alias kali-root='proot-distro login kali --user root'
-alias arch='proot-distro login archlinux'
-alias arch-root='proot-distro login archlinux --user root'
-alias nh='nethunter'
-alias nh-root='nethunter -r'
-
-# Utility aliases
-alias update='pkg update && pkg upgrade'
-alias fix-proot='pkill -9 proot'
-alias fix-storage='termux-setup-storage'
-
-# GUI aliases
-alias start-vnc='~/bin/setup-vnc'
-alias stop-vnc='vncserver -kill :1'
-EOL
-    
-    # Reload .bashrc
-    source "${HOME}/.bashrc"
-    
-    log "SUCCESS" "Aliases configured"
-}
-
-# Function to setup additional scripts
-setup_scripts() {
-    log "INFO" "Setting up utility scripts..."
-    
-    # Create fix-environment script
-    cat > "${HOME}/bin/fix-environment" << 'EOL'
-#!/data/data/com.termux/files/usr/bin/bash
-
-# Kill hanging processes
-pkill -9 proot
-killall -9 pulseaudio 2>/dev/null
-
-# Fix permissions
-termux-setup-storage
-
-# Update packages
-pkg update -y
-
-echo "Environment fixed"
-EOL
-    chmod +x "${HOME}/bin/fix-environment"
-    
-    log "SUCCESS" "Utility scripts setup complete"
-}
-
-# Function to print menu
-print_menu() {
-    clear
-    print_banner
-    print_message "\n📋 Main Menu:" "$WHITE"
-    print_message "1. Full Installation (Recommended)" "$CYAN"
-    print_message "2. Custom Installation" "$CYAN"
-    print_message "3. Update Existing Installation" "$CYAN"
-    print_message "4. Fix & Troubleshoot" "$CYAN"
-    print_message "5. Backup & Restore" "$CYAN"
-    print_message "6. Uninstall" "$CYAN"
-    print_message "7. About" "$CYAN"
-    print_message "8. Exit\n" "$CYAN"
-    
-    read -p "Select an option (1-8): " menu_choice
-    handle_menu_choice
-}
-
-# Function to handle menu choices
-handle_menu_choice() {
-    case $menu_choice in
-        1) perform_full_installation ;;
-        2) show_custom_installation_menu ;;
-        3) perform_update ;;
-        4) show_troubleshoot_menu ;;
-        5) show_backup_menu ;;
-        6) perform_uninstall ;;
-        7) show_about ;;
-        8) exit_script ;;
-        *) print_message "Invalid option. Please try again." "$RED" && sleep 2 && print_menu ;;
-    esac
-}
-
-# Function to perform full installation
-perform_full_installation() {
-    print_message "\n🚀 Starting Full Installation..." "$WHITE"
-    
-    # Check system requirements
-    check_system_requirements || {
-        log "ERROR" "System requirements not met"
-        press_enter_to_continue
-        return 1
-    }
-    
-    # Update system
-    log "INFO" "Updating system packages..."
-    pkg update -y && pkg upgrade -y
-    
-    # Install components
-    install_basic_tools || return 1
-    install_kali_linux || return 1
-    install_nethunter || return 1
-    install_arch_linux || return 1
-    setup_gui_environment || return 1
-    configure_aliases || return 1
-    setup_scripts || return 1
-    
-    print_message "\n✨ Full Installation Complete!" "$GREEN"
-    press_enter_to_continue
-}
-
-# Function to install basic tools
-install_basic_tools() {
-    log "INFO" "Installing basic tools..."
-    
-    local basic_packages=(
-        "proot-distro" "curl" "wget" "git" "python" "python-pip"
-        "vim" "nano" "openssh" "tmux" "htop" "nmap"
-        "termux-api" "termux-tools"
-    )
-    
-    for package in "${basic_packages[@]}"; do
-        install_package "$package" || return 1
-    done
-    
-    log "SUCCESS" "Basic tools installed"
-}
-
-# Function to show custom installation menu
-show_custom_installation_menu() {
-    clear
-    print_message "\n🔧 Custom Installation Menu:" "$WHITE"
-    print_message "1. Install Kali Linux Only" "$CYAN"
-    print_message "2. Install NetHunter Only" "$CYAN"
-    print_message "3. Install Arch Linux Only" "$CYAN"
-    print_message "4. Install Basic Tools Only" "$CYAN"
-    print_message "5. Back to Main Menu\n" "$CYAN"
-    
-    read -p "Select an option (1-5): " custom_choice
-    case $custom_choice in
-        1) install_kali_linux && press_enter_to_continue ;;
-        2) install_nethunter && press_enter_to_continue ;;
-        3) install_arch_linux && press_enter_to_continue ;;
-        4) install_basic_tools && press_enter_to_continue ;;
-        5) print_menu ;;
-        *) print_message "Invalid option. Please try again." "$RED" && sleep 2 && show_custom_installation_menu ;;
-    esac
-}
-
-# Function to show troubleshoot menu
-show_troubleshoot_menu() {
-    clear
-    print_message "\n🔧 Troubleshooting Menu:" "$WHITE"
-    print_message "1. Fix Common Issues" "$CYAN"
-    print_message "2. Reset Environment" "$CYAN"
-    print_message "3. Fix Permissions" "$CYAN"
-    print_message "4. Fix NetHunter GUI" "$CYAN"
-    print_message "5. Check System Status" "$CYAN"
-    print_message "6. Back to Main Menu\n" "$CYAN"
-    
-    read -p "Select an option (1-6): " trouble_choice
-    case $trouble_choice in
-        1) fix_common_errors && press_enter_to_continue ;;
-        2) reset_environment && press_enter_to_continue ;;
-        3) fix_permissions && press_enter_to_continue ;;
-        4) fix_nethunter_gui && press_enter_to_continue ;;
-        5) check_system_health && press_enter_to_continue ;;
-        6) print_menu ;;
-        *) print_message "Invalid option. Please try again." "$RED" && sleep 2 && show_troubleshoot_menu ;;
-    esac
-}
-
-# Function to show backup menu
-show_backup_menu() {
-    clear
-    print_message "\n💾 Backup & Restore Menu:" "$WHITE"
-    print_message "1. Backup Environment" "$CYAN"
-    print_message "2. Restore from Backup" "$CYAN"
-    print_message "3. Export Settings" "$CYAN"
-    print_message "4. Import Settings" "$CYAN"
-    print_message "5. Back to Main Menu\n" "$CYAN"
-    
-    read -p "Select an option (1-5): " backup_choice
-    case $backup_choice in
-        1) backup_environment && press_enter_to_continue ;;
-        2) restore_environment && press_enter_to_continue ;;
-        3) export_settings && press_enter_to_continue ;;
-        4) import_settings && press_enter_to_continue ;;
-        5) print_menu ;;
-        *) print_message "Invalid option. Please try again." "$RED" && sleep 2 && show_backup_menu ;;
-    esac
-}
-
-# Function to perform update
-perform_update() {
-    print_message "\n🔄 Updating System..." "$WHITE"
-    
-    # Update package lists
-    pkg update -y || {
-        log "ERROR" "Failed to update package lists"
-        press_enter_to_continue
-        return 1
-    }
-    
-    # Upgrade packages
-    pkg upgrade -y || {
-        log "ERROR" "Failed to upgrade packages"
-        press_enter_to_continue
-        return 1
-    }
-    
-    # Update Kali if installed
-    if proot-distro list | grep -q "kali: installed"; then
-        log "INFO" "Updating Kali Linux..."
-        proot-distro login kali -- apt update
-        proot-distro login kali -- apt upgrade -y
-    fi
-    
-    # Update Arch if installed
-    if proot-distro list | grep -q "archlinux: installed"; then
-        log "INFO" "Updating Arch Linux..."
-        proot-distro login archlinux -- pacman -Syu --noconfirm
-    fi
-    
-    # Update NetHunter if installed
-    if [ -f "${HOME}/nethunter" ]; then
-        log "INFO" "Updating NetHunter..."
-        nethunter update
-    fi
-    
-    print_message "\n✨ Update Complete!" "$GREEN"
-    press_enter_to_continue
-}
-
-# Function to perform uninstall
-perform_uninstall() {
-    print_message "\n⚠️ Warning: This will remove all installed components." "$RED"
-    read -p "Are you sure you want to continue? (y/N): " confirm
-    
-    if [[ $confirm == [yY] ]]; then
-        print_message "\n🗑️ Uninstalling..." "$YELLOW"
-        
-        # Remove Kali
-        if proot-distro list | grep -q "kali: installed"; then
-            proot-distro remove kali
-        fi
-        
-        # Remove Arch
-        if proot-distro list | grep -q "archlinux: installed"; then
-            proot-distro remove archlinux
-        fi
-        
-        # Remove NetHunter
-        if [ -d "${HOME}/nethunter" ]; then
-            rm -rf "${HOME}/nethunter"
-        fi
-        
-        # Remove scripts and configs
-        rm -f "${HOME}/.kali-setup.sh" "${HOME}/.arch-setup.sh" "${HOME}/install-nethunter-termux"
-        rm -rf "${HOME}/bin/fix-environment" "${HOME}/bin/setup-vnc"
-        
-        print_message "\n✨ Uninstallation Complete!" "$GREEN"
-    fi
-    press_enter_to_continue
-}
-
-# Function to show about
-show_about() {
-    clear
-    print_message "\n📱 About:" "$WHITE"
-    print_message "Developer: ITZBINAR" "$CYAN"
-    print_message "Version: 2.4" "$CYAN"
-    print_message "GitHub: https://github.com/itzbinar" "$CYAN"
-    print_message "\nFeatures:" "$WHITE"
-    print_message "- Full Kali Linux Environment" "$CYAN"
-    print_message "- NetHunter with GUI Support" "$CYAN"
-    print_message "- Arch Linux Development Environment" "$CYAN"
-    print_message "- Professional Tool Suite" "$CYAN"
-    print_message "- Root & Non-Root Support" "$CYAN"
-    press_enter_to_continue
-}
-
-# Function to exit script
-exit_script() {
-    print_message "\n👋 Thank you for using ITZBINAR's Linux Tools!" "$GREEN"
-    print_message "Visit https://github.com/itzbinar for updates.\n" "$CYAN"
-    exit 0
-}
-
-# Function to press enter to continue
-press_enter_to_continue() {
-    echo
-    read -p "Press Enter to continue..."
-    print_menu
-}
-
-# Function to export settings
-export_settings() {
-    local export_file="${HOME}/.termux/settings_export.tar.gz"
-    log "INFO" "Exporting settings to: $export_file"
-    
-    tar -czf "$export_file" \
-        -C "${HOME}" \
-        .termux .bashrc .bash_history \
-        bin/.kali-setup.sh bin/.arch-setup.sh bin/fix-environment bin/setup-vnc \
-        2>/dev/null || true
-        
-    log "SUCCESS" "Settings exported to: $export_file"
-}
-
-# Function to import settings
-import_settings() {
-    local import_file="${HOME}/.termux/settings_export.tar.gz"
-    
-    if [ ! -f "$import_file" ]; then
-        log "ERROR" "No settings export found at: $import_file"
-        return 1
-    fi
-    
-    log "INFO" "Importing settings from: $import_file"
-    
-    tar -xzf "$import_file" -C "${HOME}" || {
-        log "ERROR" "Failed to import settings"
-        return 1
-    }
-    
-    log "SUCCESS" "Settings imported successfully"
-}
-
-# Function to fix NetHunter GUI
-fix_nethunter_gui() {
-    log "INFO" "Fixing NetHunter GUI..."
-    
-    # Kill existing VNC processes
-    vncserver -kill :1 2>/dev/null || true
-    
-    # Reinstall VNC
-    pkg reinstall -y tigervnc
-    
-    # Reset NetHunter GUI
-    if [ -f "${HOME}/nethunter" ]; then
-        nethunter kex kill
-        nethunter kex &
-        log "SUCCESS" "NetHunter GUI reset"
-    else
-        log "ERROR" "NetHunter not installed"
-        return 1
-    fi
-}
-
-# Function to reset environment
-reset_environment() {
-    log "INFO" "Resetting environment..."
-    
-    # Kill all proot processes
-    pkill -9 proot
-    
-    # Reset package manager
-    rm -rf /data/data/com.termux/files/usr/var/lib/apt/lists/*
-    pkg update -y
-    
-    # Reset storage permissions
-    termux-setup-storage
-    
-    # Recreate necessary directories
-    mkdir -p "${HOME}/bin" "${HOME}/.termux"
-    
-    log "SUCCESS" "Environment reset complete"
-}
-
-# Start the script
-if [ "${BASH_SOURCE[0]}" = "$0" ]; then
-    # Ensure we're in Termux
-    if [ ! -d "/data/data/com.termux" ]; then
-        print_message "Error: This script must be run in Termux!" "$RED"
-        exit 1
-    fi
-    
-    # Create necessary directories
-    mkdir -p "${HOME}/bin" "${HOME}/.termux" "${BACKUP_DIR}" "${CONFIG_DIR}"
-    
-    # Start the menu
-    print_menu
-fi 
+print_message "     Powered by ITZBINAR's Advanced Toolkit\n" "$PURPLE" 
