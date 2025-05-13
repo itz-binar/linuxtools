@@ -5,7 +5,7 @@
   <p>Professional Penetration Testing Environment Setup</p>
   
   [![Developer](https://img.shields.io/badge/Developer-ITZBINAR-purple.svg)](https://github.com/itz-binar)
-  [![Version](https://img.shields.io/badge/Version-2.3-blue.svg)]()
+  [![Version](https://img.shields.io/badge/Version-2.4-blue.svg)]()
   [![License](https://img.shields.io/badge/License-MIT-green.svg)]()
   [![Root Status](https://img.shields.io/badge/Non--Root-Supported-orange.svg)]()
   [![GUI](https://img.shields.io/badge/GUI-Supported-brightgreen.svg)]()
@@ -13,6 +13,13 @@
 </div>
 
 ## 🚀 Features
+
+- **Enhanced Error Handling & Recovery**
+  - Strict error handling with retry mechanism
+  - Automatic error detection and recovery
+  - Comprehensive logging system
+  - System health monitoring
+  - Cleanup utilities
 
 - **Interactive Menu System**
   - Full Installation Option
@@ -201,7 +208,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 **ITZBINAR**
 - GitHub: [@itz-binar](https://github.com/itz-binar)
-- Version: 2.3
+- Version: 2.4
 - Professional Penetration Testing Suite
 
 ## 📞 Support
