@@ -122,8 +122,6 @@ ITZBINAR's Advanced Pentesting Toolkit is a professional-grade penetration testi
 curl -sSL https://raw.githubusercontent.com/itz-binar/linuxtools/main/scripts/itzbinar.sh -o itzbinar.sh && chmod +x itzbinar.sh && ./itzbinar.sh
 ```
 
-### 📦 Manual Installation
-```bash
 # Clone repository
 git clone https://github.com/itz-binar/linuxtools.git
 
@@ -135,7 +133,7 @@ chmod +x itzbinar.sh
 
 # Run installation
 ./itzbinar.sh
-```
+
 
 </details>
 
