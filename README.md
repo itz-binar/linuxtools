@@ -114,8 +114,6 @@ ITZBINAR's Advanced Pentesting Toolkit is a professional-grade penetration testi
 
 ## ⚡ Quick Installation
 
-<details>
-<summary>Click to expand installation methods</summary>
 
 ### 🚀 One-Line Installation (Recommended)
 ```bash
@@ -128,11 +126,9 @@ git clone https://github.com/itz-binar/linuxtools.git
 cd linuxtools/scripts
 ```
 ```bash
-# 3. Make the installer executable
 chmod +x itzbinar.sh
 ```
 ```bash
-# 4. Run the installation script
 ./itzbinar.sh
 ```
 </details>
