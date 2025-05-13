@@ -168,6 +168,195 @@ aircrack-ng        # Wireless network security
 wifite             # Automated wireless auditor
 ```
 
+## 📚 Complete Command Reference
+
+### 🌐 Environment Commands
+```bash
+# Kali Linux Commands
+kali                    # Start Kali Linux environment
+kali-root              # Start Kali Linux with root access
+kali-update            # Update Kali Linux system
+kali-fix               # Fix Kali Linux issues
+kali-backup            # Backup Kali environment
+kali-restore           # Restore Kali environment
+
+# NetHunter Commands
+nh                     # Start NetHunter environment
+nh-root                # Start NetHunter with root access
+nh-kex                 # Start NetHunter GUI (Kex)
+nh-kex-stop           # Stop NetHunter GUI
+nh-update             # Update NetHunter system
+nh-fix                # Fix NetHunter issues
+nh-backup             # Backup NetHunter settings
+nh-restore            # Restore NetHunter settings
+
+# Arch Linux Commands
+arch                   # Start Arch Linux environment
+arch-root              # Start Arch Linux with root access
+arch-update           # Update Arch Linux system
+arch-fix              # Fix Arch Linux issues
+arch-backup           # Backup Arch environment
+arch-restore          # Restore Arch environment
+
+# GUI and Display
+start-vnc             # Start VNC server
+stop-vnc              # Stop VNC server
+set-resolution        # Set display resolution
+reset-display         # Reset display settings
+```
+
+### 🔧 System Management Commands
+```bash
+# Performance Monitoring
+monitor-system        # Start system resource monitoring
+analyze-performance   # Generate performance report
+optimize-system       # Run system optimization
+check-health         # Run system health check
+verify-deps          # Verify dependency versions
+show-processes       # Show running processes
+kill-process         # Kill a specific process
+clean-system         # Clean system and remove temp files
+
+# Backup Management
+create-backup        # Create full system backup
+restore-backup       # Restore from backup
+list-backups         # List available backups
+verify-backup        # Verify backup integrity
+export-settings      # Export system settings
+import-settings      # Import system settings
+rotate-logs          # Rotate system logs
+
+# Storage Management
+check-storage        # Check storage usage
+clean-cache          # Clean package cache
+fix-permission       # Fix storage permissions
+manage-space         # Manage storage space
+```
+
+### 🛠️ Development Commands
+```bash
+# Package Management
+pkg                  # Termux package manager
+pkg update           # Update package lists
+pkg upgrade          # Upgrade installed packages
+pkg install         # Install a package
+pkg remove          # Remove a package
+pkg clean           # Clean package cache
+
+# Python Development
+python              # Python interpreter
+pip                 # Python package manager
+pip install         # Install Python package
+pip list            # List installed packages
+virtualenv          # Create virtual environment
+activate            # Activate virtual environment
+
+# Version Control
+git                 # Git version control
+git-setup           # Configure Git settings
+git-credentials     # Manage Git credentials
+
+# Build Tools
+make                # Build automation tool
+gcc                 # GNU Compiler Collection
+clang               # LLVM Compiler
+cmake               # Build system generator
+```
+
+### 🔒 Security Commands
+```bash
+# Network Security
+nmap                # Network scanner
+nmap-full           # Full port scan
+dirb                # Web content scanner
+nikto               # Web vulnerability scanner
+sqlmap              # SQL injection tool
+hydra               # Password cracker
+wireshark           # Network protocol analyzer
+
+# Wireless Security
+aircrack-ng        # Wireless security suite
+wifite             # Automated wireless auditor
+reaver             # WPS security tool
+wash               # WPS scanning tool
+
+# Web Security
+burpsuite          # Web security testing
+zaproxy            # Web app scanner
+gobuster           # Directory enumeration
+wpscan             # WordPress scanner
+```
+
+### 🔨 Utility Commands
+```bash
+# System Utilities
+fix-proot           # Fix hanging proot sessions
+fix-environment     # Fix environment issues
+fix-network         # Fix network issues
+fix-dns             # Fix DNS issues
+termux-setup        # Setup Termux environment
+termux-reload       # Reload Termux configuration
+
+# File Operations
+extract             # Extract archives
+compress            # Compress files/folders
+encrypt             # Encrypt files
+decrypt             # Decrypt files
+secure-delete       # Securely delete files
+
+# Network Utilities
+check-connection    # Check network connection
+test-speed         # Test network speed
+fix-wifi           # Fix WiFi issues
+setup-ssh          # Setup SSH access
+start-ssh          # Start SSH server
+stop-ssh           # Stop SSH server
+```
+
+### ⚙️ Configuration Commands
+```bash
+# Environment Configuration
+set-env             # Set environment variables
+get-env             # Get environment variables
+reset-env           # Reset environment settings
+edit-config         # Edit configuration files
+show-config         # Show current configuration
+
+# Terminal Configuration
+set-font            # Set terminal font
+set-colors          # Set terminal colors
+set-keyboard        # Configure keyboard
+set-shortcuts       # Set custom shortcuts
+reset-terminal      # Reset terminal settings
+
+# Tool Configuration
+config-tools        # Configure tool settings
+update-tools        # Update tool configurations
+reset-tools         # Reset tool settings
+customize-prompt    # Customize shell prompt
+set-aliases         # Set custom aliases
+```
+
+### 🎯 Quick Reference
+```bash
+# Most Used Commands
+update              # Update all packages
+upgrade             # Upgrade all packages
+fix                 # Fix common issues
+backup              # Quick backup
+restore             # Quick restore
+status              # Show system status
+help                # Show help message
+version             # Show version info
+
+# Emergency Commands
+emergency-fix       # Emergency system fix
+force-stop          # Force stop all processes
+safe-mode           # Start in safe mode
+recovery            # Enter recovery mode
+reset-all           # Reset everything
+```
+
 ## 🚨 Troubleshooting Guide
 
 ### Common Issues
