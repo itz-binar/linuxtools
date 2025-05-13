@@ -3,12 +3,16 @@
 # =========================================================
 # Advanced Termux + Kali + NetHunter Installer
 # Developer: ITZBINAR
-# Version: 2.3
+# Version: 2.4
 # GitHub: https://github.com/itzbinar
 # Description: Professional Pentesting Environment Setup
 # Support: Root and Non-Root Devices
 # License: MIT
 # =========================================================
+
+# Strict mode
+set -euo pipefail
+IFS=$'\n\t'
 
 # Colors for better readability
 RED='\033[0;31m'
@@ -20,9 +24,33 @@ CYAN='\033[0;36m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
 
-# Error handling
-set -e
-trap 'handle_error $? $LINENO $BASH_LINENO "$BASH_COMMAND" $(printf "::%s" ${FUNCNAME[@]:-})' ERR
+# Global variables
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOG_FILE="${HOME}/.termux/install_log.txt"
+BACKUP_DIR="${HOME}/.termux/backups"
+CONFIG_DIR="${HOME}/.termux/config"
+ERROR_COUNT=0
+MAX_RETRIES=3
+
+# Create necessary directories
+mkdir -p "${BACKUP_DIR}" "${CONFIG_DIR}" "$(dirname "${LOG_FILE}")"
+
+# Logging function
+log() {
+    local level=$1
+    shift
+    local message="[$(date '+%Y-%m-%d %H:%M:%S')] [$level] $*"
+    echo -e "$message" >> "${LOG_FILE}"
+    if [[ $level == "ERROR" ]]; then
+        print_message "$message" "$RED"
+    elif [[ $level == "WARNING" ]]; then
+        print_message "$message" "$YELLOW"
+    elif [[ $level == "SUCCESS" ]]; then
+        print_message "$message" "$GREEN"
+    else
+        print_message "$message" "$CYAN"
+    fi
+}
 
 # Function to handle errors
 handle_error() {
@@ -32,31 +60,241 @@ handle_error() {
     local last_command=$4
     local func_trace=$5
 
-    print_message "\n❌ Error occurred in script:" "$RED"
-    print_message "Exit code: $exit_code" "$RED"
-    print_message "Line number: $line_no" "$RED"
-    print_message "Command: $last_command" "$RED"
-    print_message "Function trace: $func_trace" "$RED"
+    ((ERROR_COUNT++))
+
+    log "ERROR" "Error occurred in script:"
+    log "ERROR" "Exit code: $exit_code"
+    log "ERROR" "Line number: $line_no"
+    log "ERROR" "Command: $last_command"
+    log "ERROR" "Function trace: $func_trace"
     
-    print_message "\n🔄 Attempting to fix..." "$YELLOW"
-    fix_common_errors
+    if [ $ERROR_COUNT -lt $MAX_RETRIES ]; then
+        log "WARNING" "Attempting recovery (Attempt $ERROR_COUNT of $MAX_RETRIES)..."
+        fix_common_errors
+        return 0
+    else
+        log "ERROR" "Maximum retry attempts reached. Please check the log file: $LOG_FILE"
+        exit 1
+    fi
 }
 
-# Function to fix common errors
-fix_common_errors() {
-    print_message "1. Killing hanging processes..." "$YELLOW"
+# Enhanced error handling
+trap 'handle_error $? $LINENO $BASH_LINENO "$BASH_COMMAND" $(printf "::%s" ${FUNCNAME[@]:-})' ERR
+
+# Function to check system requirements
+check_system_requirements() {
+    log "INFO" "Checking system requirements..."
+    
+    # Check Android version
+    if ! command -v getprop >/dev/null; then
+        log "ERROR" "This script must be run on Android in Termux"
+        exit 1
+    fi
+    
+    local android_version=$(getprop ro.build.version.release)
+    if (( ${android_version%%.*} < 7 )); then
+        log "ERROR" "Android 7.0 or higher is required (found: $android_version)"
+        exit 1
+    }
+    
+    # Check available storage
+    local available_storage=$(df -h "${HOME}" | awk 'NR==2 {print $4}' | sed 's/G//')
+    if (( ${available_storage%%.*} < 10 )); then
+        log "WARNING" "Less than 10GB storage available ($available_storage GB)"
+        read -p "Continue anyway? (y/N): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            exit 1
+        fi
+    fi
+    
+    # Check internet connectivity
+    if ! ping -c 1 8.8.8.8 >/dev/null 2>&1; then
+        log "ERROR" "No internet connection detected"
+        exit 1
+    fi
+    
+    log "SUCCESS" "System requirements check passed"
+}
+
+# Function to backup environment
+backup_environment() {
+    local backup_name="backup_$(date +%Y%m%d_%H%M%S)"
+    local backup_path="${BACKUP_DIR}/${backup_name}"
+    
+    log "INFO" "Creating backup at: $backup_path"
+    
+    # Create backup directory
+    mkdir -p "$backup_path"
+    
+    # Backup Termux home
+    tar -czf "${backup_path}/termux_home.tar.gz" -C "${HOME}" .termux .bash_history .bashrc
+    
+    # Backup Kali rootfs if exists
+    if [ -d "${PREFIX}/var/lib/proot-distro/installed-rootfs/kali" ]; then
+        tar -czf "${backup_path}/kali_rootfs.tar.gz" -C "${PREFIX}/var/lib/proot-distro/installed-rootfs" kali
+    fi
+    
+    # Backup configuration
+    cp -r "${CONFIG_DIR}" "${backup_path}/config"
+    
+    # Create backup info
+    cat > "${backup_path}/backup_info.txt" << EOL
+Backup created on: $(date)
+Termux version: $(pkg -v)
+Android version: $(getprop ro.build.version.release)
+Device: $(getprop ro.product.model)
+EOL
+    
+    log "SUCCESS" "Backup created successfully at: $backup_path"
+}
+
+# Function to restore environment
+restore_environment() {
+    local backups=($(ls -1 "${BACKUP_DIR}"))
+    
+    if [ ${#backups[@]} -eq 0 ]; then
+        log "ERROR" "No backups found in ${BACKUP_DIR}"
+        return 1
+    fi
+    
+    log "INFO" "Available backups:"
+    for i in "${!backups[@]}"; do
+        echo "$((i+1)). ${backups[$i]}"
+    done
+    
+    read -p "Select backup to restore (1-${#backups[@]}): " choice
+    
+    if ! [[ "$choice" =~ ^[0-9]+$ ]] || [ "$choice" -lt 1 ] || [ "$choice" -gt "${#backups[@]}" ]; then
+        log "ERROR" "Invalid selection"
+        return 1
+    fi
+    
+    local selected_backup="${BACKUP_DIR}/${backups[$((choice-1))]}"
+    
+    log "WARNING" "Restoring from backup will overwrite current environment"
+    read -p "Continue? (y/N): " -n 1 -r
+    echo
+    
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        return 1
+    fi
+    
+    # Stop all services
     pkill -9 proot 2>/dev/null || true
     
-    print_message "2. Fixing permissions..." "$YELLOW"
-    termux-setup-storage 2>/dev/null || true
+    # Restore Termux home
+    tar -xzf "${selected_backup}/termux_home.tar.gz" -C "${HOME}"
     
-    print_message "3. Updating package lists..." "$YELLOW"
-    pkg update -y 2>/dev/null || true
+    # Restore Kali rootfs if exists
+    if [ -f "${selected_backup}/kali_rootfs.tar.gz" ]; then
+        rm -rf "${PREFIX}/var/lib/proot-distro/installed-rootfs/kali"
+        tar -xzf "${selected_backup}/kali_rootfs.tar.gz" -C "${PREFIX}/var/lib/proot-distro/installed-rootfs"
+    fi
     
-    print_message "4. Cleaning package cache..." "$YELLOW"
-    pkg clean 2>/dev/null || true
+    # Restore configuration
+    rm -rf "${CONFIG_DIR}"
+    cp -r "${selected_backup}/config" "${CONFIG_DIR}"
     
-    print_message "\n✔ Recovery attempted. Please try again." "$GREEN"
+    log "SUCCESS" "Environment restored from: ${selected_backup}"
+}
+
+# Function to check and fix permissions
+fix_permissions() {
+    log "INFO" "Fixing permissions..."
+    
+    # Fix Termux home permissions
+    chmod 700 -R "${HOME}/.termux"
+    chmod 755 "${HOME}"
+    
+    # Fix storage permissions
+    if [ -d "${HOME}/storage" ]; then
+        chmod 700 -R "${HOME}/storage"
+    fi
+    
+    # Fix executable permissions
+    find "${HOME}/bin" -type f -exec chmod 755 {} \; 2>/dev/null || true
+    
+    log "SUCCESS" "Permissions fixed"
+}
+
+# Function to validate installation
+validate_installation() {
+    local component=$1
+    log "INFO" "Validating $component installation..."
+    
+    case $component in
+        "kali")
+            if ! proot-distro list | grep -q "kali: installed"; then
+                log "ERROR" "Kali Linux installation validation failed"
+                return 1
+            fi
+            ;;
+        "nethunter")
+            if ! command -v nethunter >/dev/null; then
+                log "ERROR" "NetHunter installation validation failed"
+                return 1
+            fi
+            ;;
+        "arch")
+            if ! proot-distro list | grep -q "archlinux: installed"; then
+                log "ERROR" "Arch Linux installation validation failed"
+                return 1
+            fi
+            ;;
+    esac
+    
+    log "SUCCESS" "$component installation validated"
+    return 0
+}
+
+# Function to perform system health check
+check_system_health() {
+    log "INFO" "Performing system health check..."
+    
+    # Check disk space
+    local disk_usage=$(df -h "${HOME}" | awk 'NR==2 {print $5}' | sed 's/%//')
+    if [ "$disk_usage" -gt 90 ]; then
+        log "WARNING" "Disk usage is high: ${disk_usage}%"
+    fi
+    
+    # Check running processes
+    local proot_count=$(pgrep -c proot || echo "0")
+    if [ "$proot_count" -gt 5 ]; then
+        log "WARNING" "High number of proot processes: $proot_count"
+    fi
+    
+    # Check package manager
+    if ! pkg list-installed >/dev/null 2>&1; then
+        log "ERROR" "Package manager is not functioning properly"
+        return 1
+    fi
+    
+    # Check network connectivity
+    if ! ping -c 1 8.8.8.8 >/dev/null 2>&1; then
+        log "WARNING" "Network connectivity issues detected"
+    fi
+    
+    log "SUCCESS" "System health check completed"
+}
+
+# Function to clean up system
+clean_system() {
+    log "INFO" "Cleaning system..."
+    
+    # Clean package cache
+    pkg clean
+    
+    # Remove old backups (keep last 5)
+    cd "${BACKUP_DIR}" && ls -t | tail -n +6 | xargs rm -rf 2>/dev/null || true
+    
+    # Clean logs (keep last 1000 lines)
+    tail -n 1000 "${LOG_FILE}" > "${LOG_FILE}.tmp" && mv "${LOG_FILE}.tmp" "${LOG_FILE}"
+    
+    # Remove temporary files
+    rm -rf "${HOME}/.termux/tmp"/* 2>/dev/null || true
+    
+    log "SUCCESS" "System cleaned"
 }
 
 # Function to print colored messages
@@ -236,7 +474,7 @@ show_about() {
     clear
     print_message "\n📱 About:" "$WHITE"
     print_message "Developer: ITZBINAR" "$CYAN"
-    print_message "Version: 2.3" "$CYAN"
+    print_message "Version: 2.4" "$CYAN"
     print_message "GitHub: https://github.com/itzbinar" "$CYAN"
     print_message "\nFeatures:" "$WHITE"
     print_message "- Full Kali Linux Environment" "$CYAN"
@@ -461,7 +699,7 @@ print_message "      Use alternative tools when available\n" "$YELLOW"
 show_developer_info() {
     print_message "\n📱 Developer Information:" "$PURPLE"
     print_message "   → Developer: ITZBINAR" "$CYAN"
-    print_message "   → Version: 2.3" "$CYAN"
+    print_message "   → Version: 2.4" "$CYAN"
     print_message "   → GitHub: https://github.com/itzbinar" "$CYAN"
     print_message "   → Report issues or contribute on GitHub\n" "$CYAN"
 }
