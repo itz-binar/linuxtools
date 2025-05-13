@@ -5,13 +5,21 @@
   <p>Professional Penetration Testing Environment Setup</p>
   
   [![Developer](https://img.shields.io/badge/Developer-ITZBINAR-purple.svg)](https://github.com/itz-binar)
-  [![Version](https://img.shields.io/badge/Version-2.2-blue.svg)]()
+  [![Version](https://img.shields.io/badge/Version-2.3-blue.svg)]()
   [![License](https://img.shields.io/badge/License-MIT-green.svg)]()
   [![Root Status](https://img.shields.io/badge/Non--Root-Supported-orange.svg)]()
   [![GUI](https://img.shields.io/badge/GUI-Supported-brightgreen.svg)]()
+  [![Menu](https://img.shields.io/badge/Menu-Interactive-yellow.svg)]()
 </div>
 
 ## 🚀 Features
+
+- **Interactive Menu System**
+  - Full Installation Option
+  - Custom Installation Choices
+  - Update & Maintenance Tools
+  - Backup & Restore Features
+  - Troubleshooting Utilities
 
 - **Complete Linux Environments**
   - Kali Linux for penetration testing
@@ -32,6 +40,12 @@
   - Version Control Systems
   - Database Systems
   - Build Tools & Compilers
+
+- **Error Handling & Recovery**
+  - Automatic error detection
+  - Self-healing capabilities
+  - Troubleshooting guides
+  - Recovery tools
 
 ## 📋 Prerequisites
 
@@ -58,6 +72,48 @@ chmod +x scripts/install-kali-termux.sh
 3. Run the installer:
 ```bash
 ./scripts/install-kali-termux.sh
+```
+
+## 📚 Menu System
+
+### Main Menu
+```
+1. Full Installation (Recommended)
+2. Custom Installation
+3. Update Existing Installation
+4. Fix & Troubleshoot
+5. Backup & Restore
+6. Uninstall
+7. About
+8. Exit
+```
+
+### Custom Installation Menu
+```
+1. Install Kali Linux Only
+2. Install NetHunter Only
+3. Install Arch Linux Only
+4. Install Basic Tools Only
+5. Back to Main Menu
+```
+
+### Troubleshooting Menu
+```
+1. Fix Common Issues
+2. Reset Environment
+3. Fix Permissions
+4. Fix NetHunter GUI
+5. Check System Status
+6. Back to Main Menu
+```
+
+### Backup & Restore Menu
+```
+1. Backup Environment
+2. Restore from Backup
+3. Export Settings
+4. Import Settings
+5. Back to Main Menu
 ```
 
 ## 🛠️ Available Environments
@@ -87,114 +143,47 @@ chmod +x scripts/install-kali-termux.sh
 - Storage access configured
 - Python development ready
 
-## 📚 Usage
+## ⚡ Quick Commands
 
-### NetHunter Commands
+### Environment Management
 ```bash
-# Start NetHunter
-nh
+# Start environments
+kali                  # Start Kali Linux
+nh                    # Start NetHunter
+arch                  # Start Arch Linux
 
-# Start NetHunter GUI
-nh-kex
+# GUI controls
+nh-kex               # Start NetHunter GUI
+nh-kex-stop          # Stop NetHunter GUI
 
-# Stop NetHunter GUI
-nh-kex-stop
-
-# NetHunter root shell
-nh-root
-
-# Update NetHunter
-nh-update
+# Updates
+update               # Update Termux
+nh-update            # Update NetHunter
 ```
 
-### GUI Setup
+### Troubleshooting
 ```bash
-# Set up NetHunter GUI
-~/bin/setup-nethunter-gui
-
-# Access via VNC Viewer:
-# Address: localhost:5901
-# Password: (as set during setup)
+fix-proot            # Fix hanging sessions
+fix-permission       # Fix storage access
+~/bin/fix-environment # Fix environment issues
 ```
 
-### Starting Environments
+### Backup & Restore
 ```bash
-# Start Kali Linux
-kali
-
-# Start Arch Linux
-arch
-
-# Fix common issues
-fix-proot
-fix-permission
+backup-env           # Backup environment
+restore-env          # Restore from backup
+export-settings      # Export configurations
+import-settings      # Import configurations
 ```
 
-### Troubleshooting Commands
-```bash
-# Fix environment issues
-~/bin/fix-environment
+## 🔄 Error Recovery
 
-# Reset Kali Linux
-kali-fix
-
-# Reset Arch Linux
-arch-fix
-
-# Fix storage permissions
-fix-permission
-```
-
-## 🔄 Updates and Maintenance
-
-- Regular updates via `update` command
-- Automatic package management
-- Easy tool installation
-- Version control integration
-- Non-root compatibility fixes
-- GUI environment updates
-
-## ⚡ Non-Root Features
-
-### What Works Without Root
-- Full Linux environments (Kali & Arch)
-- NetHunter basic features
-- Most networking tools
-- Development environments
-- Package management
-- Storage access
-- Python tools and frameworks
-- GUI interface
-
-### Limited Features Without Root
-- Some system-level operations
-- Certain network scanning features
-- Hardware access
-- Low-level system modifications
-
-### Troubleshooting Non-Root Issues
-1. Use `fix-proot` for hanging sessions
-2. Run `fix-permission` for storage issues
-3. Execute `~/bin/fix-environment` for general fixes
-4. Use `kali-fix` or `arch-fix` to reset Linux environments
-
-## 🖥️ GUI Access
-
-1. **Setup**
-   - Run `~/bin/setup-nethunter-gui`
-   - Set your VNC password
-   - Start the GUI server
-
-2. **Connection**
-   - Install VNC Viewer from Play Store
-   - Connect to `localhost:5901`
-   - Enter your password
-
-3. **Usage**
-   - Full graphical environment
-   - GUI-based tools
-   - Multiple workspaces
-   - Easy tool access
+The script includes automatic error recovery for:
+- Hanging processes
+- Permission issues
+- Package conflicts
+- Network problems
+- Storage access errors
 
 ## 🤝 Contributing
 
@@ -212,7 +201,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 **ITZBINAR**
 - GitHub: [@itz-binar](https://github.com/itz-binar)
-- Version: 2.2
+- Version: 2.3
 - Professional Penetration Testing Suite
 
 ## 📞 Support
@@ -232,5 +221,5 @@ For support, issues, or contributions, please visit:
 <div align="center">
   <p>Created with ❤️ by ITZBINAR</p>
   <p>Professional Penetration Testing & Development Environment</p>
-  <p>Supports Both Root and Non-Root Devices with GUI</p>
+  <p>Interactive Menu System with Error Recovery</p>
 </div> 
