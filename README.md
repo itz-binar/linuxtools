@@ -211,7 +211,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Version: 2.4
 - Professional Penetration Testing Suite
 
-## 📞 Support
+## 📞 Support 
 
 For support, issues, or contributions, please visit:
 - GitHub Issues: [Report Issues](https://github.com/itz-binar/linuxtools/issues)
