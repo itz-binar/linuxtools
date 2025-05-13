@@ -25,15 +25,19 @@
 ---
 
 <p align="center">
-  <a href="#-key-features">Features</a> •
-  <a href="#-installation">Installation</a> •
-  <a href="#-usage">Usage</a> •
-  <a href="#-environments">Environments</a> •
-  <a href="#-tools">Tools</a> •
-  <a href="#-support">Support</a>
+  <a href="#-key-features">Key Features</a> •
+  <a href="#-prerequisites">Prerequisites</a> •
+  <a href="#-quick-installation">Installation</a> •
+  <a href="#-usage-guide">Usage</a> •
+  <a href="#-tools--features">Tools</a> •
+  <a href="#-support--community">Support</a>
 </p>
 
 </div>
+
+## ⭐ Overview
+
+ITZBINAR's Advanced Pentesting Toolkit is a professional-grade penetration testing environment for Android devices using Termux. It provides a complete suite of security tools, multiple Linux environments, and an extensive collection of utilities for cybersecurity professionals and ethical hackers.
 
 ## 🌟 Key Features
 
@@ -43,40 +47,40 @@
 
 ### 🛡️ Core Features
 - **Multi-Environment Support**
-  - Kali Linux
-  - NetHunter
-  - Arch Linux
-  - Termux Enhanced
+  - Kali Linux for Penetration Testing
+  - NetHunter for Mobile Security
+  - Arch Linux for Development
+  - Enhanced Termux Environment
 - **Advanced Security Tools**
-  - Network Analysis
-  - Web Penetration Testing
-  - Wireless Security
-  - Forensics Tools
+  - Network Analysis & Scanning
+  - Web Application Testing
+  - Wireless Security Assessment
+  - Digital Forensics Tools
 - **Professional Development**
   - Multiple Programming Languages
   - Version Control Systems
-  - Database Management
-  - Web Servers
+  - Database Management Tools
+  - Web Development Stack
 
 </td>
 <td width="50%">
 
 ### ⚡ Technical Features
 - **System Management**
-  - Performance Monitoring
-  - Resource Optimization
-  - Automated Backups
-  - Error Recovery
+  - Real-time Performance Monitoring
+  - Automated Resource Optimization
+  - Intelligent Backup System
+  - Smart Error Recovery
 - **Security Features**
-  - Root & Non-root Support
-  - Secure Environment
-  - Permission Management
-  - Process Isolation
+  - Root & Non-root Compatibility
+  - Secure Environment Isolation
+  - Advanced Permission Management
+  - Process & Resource Isolation
 - **GUI Support**
-  - VNC Server
-  - NetHunter KEX
-  - Remote Access
-  - X11 Forwarding
+  - VNC Server Integration
+  - NetHunter Kex Interface
+  - Remote Desktop Access
+  - X11 Display Forwarding
 
 </td>
 </tr>
@@ -90,17 +94,19 @@
 
 ### 📱 System Requirements
 - Android 7.0 or higher
-- Minimum 4GB RAM
-- 10GB+ free storage
+- Minimum 4GB RAM recommended
+- 10GB+ free storage space
 - Active internet connection
+- ARM64 or x86_64 architecture
 
 </td>
 <td width="50%">
 
-### 🔧 Required Apps
-- [Termux](https://f-droid.org/en/packages/com.termux/) (F-Droid version)
+### 🔧 Required Applications
+- [Termux (F-Droid Version)](https://f-droid.org/en/packages/com.termux/)
 - [Termux:API](https://f-droid.org/packages/com.termux.api/) (Optional)
-- VNC Viewer (For GUI)
+- [VNC Viewer](https://play.google.com/store/apps/details?id=com.realvnc.viewer.android) (For GUI)
+- [Hacker's Keyboard](https://play.google.com/store/apps/details?id=org.pocketworkstation.pckeyboard) (Recommended)
 
 </td>
 </tr>
@@ -111,7 +117,7 @@
 <details>
 <summary>Click to expand installation methods</summary>
 
-### 🚀 One-Line Installation
+### 🚀 One-Line Installation (Recommended)
 ```bash
 curl -sSL https://raw.githubusercontent.com/itz-binar/linuxtools/main/scripts/itzbinar.sh -o itzbinar.sh && chmod +x itzbinar.sh && ./itzbinar.sh
 ```
@@ -137,18 +143,18 @@ chmod +x itzbinar.sh
 
 ### 🌐 Environment Commands
 ```bash
-# Kali Linux
+# Kali Linux Environment
 kali                    # Start Kali Linux environment
 kali-root              # Start with root access
 kali-update            # Update Kali system
 
-# NetHunter
+# NetHunter Environment
 nh                     # Start NetHunter environment
 nh-root                # Start with root access
 nh-kex                 # Launch NetHunter GUI
 nh-kex-stop           # Stop NetHunter GUI
 
-# Arch Linux
+# Arch Linux Environment
 arch                   # Start Arch Linux environment
 arch-root              # Start with root access
 arch-update           # Update Arch system
@@ -156,12 +162,12 @@ arch-update           # Update Arch system
 
 ### 🔧 System Utilities
 ```bash
-# Updates & Maintenance
+# System Management
 update                 # Update all packages
 fix-proot             # Fix hanging sessions
 fix-permission        # Fix storage permissions
 
-# GUI Management
+# Display Management
 start-vnc             # Start VNC server
 stop-vnc              # Stop VNC server
 ```
@@ -172,18 +178,18 @@ stop-vnc              # Stop VNC server
 <tr>
 <td width="33%">
 
-### 🔍 Penetration Testing
+### 🔍 Security Tools
 - Metasploit Framework
-- Nmap Scanner
-- Wireshark
-- Burp Suite
-- SQLMap
-- Hydra
+- Nmap & Wireshark
+- Burp Suite Pro
+- SQLMap & Hydra
+- Aircrack-ng Suite
+- John the Ripper
 
 </td>
 <td width="33%">
 
-### 💻 Development
+### 💻 Development Tools
 - Python3 & pip
 - Node.js & npm
 - Git & SVN
@@ -195,12 +201,12 @@ stop-vnc              # Stop VNC server
 <td width="33%">
 
 ### 🌐 Network Tools
-- OpenSSH
-- Proxychains
-- Tor
+- OpenSSH Client/Server
+- Proxychains-ng
+- Tor & Privoxy
 - OpenVPN
 - Network Scanners
-- Packet Analysis
+- Traffic Analyzers
 
 </td>
 </tr>
@@ -213,48 +219,21 @@ stop-vnc              # Stop VNC server
 <td width="50%">
 
 ### 🛡️ Environment Security
-- Isolated Containers
+- Isolated Container System
 - Process Separation
-- Secure Storage
-- Permission Management
-- Access Control
+- Secure Storage Management
+- Permission Controls
+- Access Management
 
 </td>
 <td width="50%">
 
 ### 🔒 System Protection
-- Error Recovery
-- Backup Systems
-- Integrity Checks
+- Automatic Error Recovery
+- Incremental Backups
+- Integrity Verification
 - Update Management
 - Security Patches
-
-</td>
-</tr>
-</table>
-
-## 📚 Documentation
-
-<table>
-<tr>
-<td width="50%">
-
-### 📖 Guides
-- [Installation Guide](docs/installation.md)
-- [User Manual](docs/manual.md)
-- [Tool Reference](docs/tools.md)
-- [Security Guide](docs/security.md)
-- [Troubleshooting](docs/troubleshooting.md)
-
-</td>
-<td width="50%">
-
-### 🎓 Resources
-- [Video Tutorials](docs/tutorials.md)
-- [Example Scripts](docs/examples.md)
-- [Best Practices](docs/best-practices.md)
-- [FAQ](docs/faq.md)
-- [Updates](docs/changelog.md)
 
 </td>
 </tr>
@@ -269,8 +248,8 @@ stop-vnc              # Stop VNC server
 ### 📢 Get Help
 - [Report Issues](https://github.com/itz-binar/linuxtools/issues)
 - [Feature Requests](https://github.com/itz-binar/linuxtools/issues/new)
-- [Discussions](https://github.com/itz-binar/linuxtools/discussions)
-- [Wiki](https://github.com/itz-binar/linuxtools/wiki)
+- [Join Discussions](https://github.com/itz-binar/linuxtools/discussions)
+- [Read Wiki](https://github.com/itz-binar/linuxtools/wiki)
 
 </td>
 <td width="40%">
