@@ -3,14 +3,24 @@
 <div align="center">
   
 ```ascii
-╔══════════════════════════════════════════════════════╗
-║     ██╗████████╗███████╗██████╗ ██╗███╗   ██╗       ║
-║     ██║╚══██╔══╝╚══███╔╝██╔══██╗██║████╗  ██║       ║
-║     ██║   ██║     ███╔╝ ██████╔╝██║██╔██╗ ██║       ║
-║     ██║   ██║    ███╔╝  ██╔══██╗██║██║╚██╗██║       ║
-║     ██║   ██║   ███████╗██████╔╝██║██║ ╚████║       ║
-║     ╚═╝   ╚═╝   ╚══════╝╚═════╝ ╚═╝╚═╝  ╚═══╝       ║
-╚══════════════════════════════════════════════════════╝
++=================================================================+
+|                                                                 |
+|                                                                 |
+|                                                                 |
+|                                                                 |
+|                                                                 |
+|    ██╗████████╗███████╗██████╗ ██╗███╗   ██╗ █████╗ ██████╗     |
+|    ██║╚══██╔══╝╚══███╔╝██╔══██╗██║████╗  ██║██╔══██╗██╔══██╗    |
+|    ██║   ██║     ███╔╝ ██████╔╝██║██╔██╗ ██║███████║██████╔╝    |
+|    ██║   ██║    ███╔╝  ██╔══██╗██║██║╚██╗██║██╔══██║██╔══██╗    |
+|    ██║   ██║   ███████╗██████╔╝██║██║ ╚████║██║  ██║██║  ██║    |
+|    ╚═╝   ╚═╝   ╚══════╝╚═════╝ ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝    |
+|                                                                 |
+|                                                                 |
+|                                                                 |
+|                                                                 |
+|                                                                 |
++=================================================================+
 ```
 
   <h2>🔐 Professional Penetration Testing Environment</h2>
@@ -49,6 +59,13 @@
 │   ├── Backup & Restore Features
 │   └── Troubleshooting Utilities
 │
+├── System Management
+│   ├── Dependency Version Control
+│   ├── Performance Monitoring
+│   ├── Resource Optimization
+│   ├── Health Diagnostics
+│   └── Auto-recovery System
+│
 └── Multiple Linux Environments
     ├── Kali Linux (Pentesting)
     ├── NetHunter (Mobile Hacking)
@@ -70,6 +87,20 @@
   - Permission management
   - Storage access control
   - Process isolation
+
+- **Performance Management**
+  - Real-time system monitoring
+  - Resource usage analytics
+  - Performance optimization
+  - Automatic cleanup
+  - Process management
+
+- **Backup System**
+  - Incremental backups
+  - Version tracking
+  - Integrity verification
+  - Selective restoration
+  - Configuration preservation
 
 ## 💻 Command Reference
 
@@ -96,20 +127,22 @@ kali-update           # Update Kali Linux
 arch-update           # Update Arch Linux
 \`\`\`
 
-### 🔧 Troubleshooting Commands
+### 🔧 System Management
 \`\`\`bash
-# System Fixes
-fix-proot             # Fix hanging proot sessions
-fix-permission        # Fix storage access issues
-fix-environment       # Fix environment issues
-fix-nethunter-gui    # Fix NetHunter GUI problems
+# Performance Monitoring
+monitor-system         # Start system resource monitoring
+analyze-performance   # Generate performance report
+optimize-system      # Run system optimization
 
-# System Maintenance
-backup-env           # Create system backup
-restore-env          # Restore from backup
-export-settings     # Export configurations
-import-settings     # Import configurations
-clean-system        # Clean temporary files
+# Backup Management
+create-backup         # Create system backup
+restore-backup       # Restore from backup
+list-backups         # List available backups
+
+# Health Checks
+check-health         # Run system health check
+verify-deps          # Verify dependency versions
+fix-environment     # Fix environment issues
 \`\`\`
 
 ### 🛠️ Development Tools
@@ -150,12 +183,16 @@ wifite             # Automated wireless auditor
 | GUI Problems | Restart VNC/KEX | \`fix-nethunter-gui\` |
 | Package Errors | Clean & update | \`pkg clean && pkg update\` |
 | Environment Issues | Reset environment | \`fix-environment\` |
+| Performance Issues | Run optimization | \`optimize-system\` |
+| Backup Failures | Check integrity | \`verify-backup\` |
 
 ### Error Recovery Process
 1. Check logs: \`cat ~/.termux/install_log.txt\`
 2. Run system check: \`check_system_health\`
 3. Fix common issues: \`fix_common_errors\`
 4. Reset if needed: \`reset_environment\`
+5. Monitor performance: \`monitor-system\`
+6. Optimize if necessary: \`optimize-system\`
 
 ## 📱 Developer
 
